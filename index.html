@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Retro Bowl</title>
+<meta name="description" content="Retro Bowl — super fun retro style football game, playable right here in the arcade cabinet." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0b1220;
+    --ink-2: #14213d;
+    --turf: #2f8f46;
+    --turf-dark: #1c6132;
+    --cream: #f7f3e3;
+    --orange: #ff9f1c;
+    --yellow: #ffd23f;
+    --red: #e63946;
+    --pixel: "Press Start 2P", "Courier New", monospace;
+    --body: ui-monospace, "SFMono-Regular", Menlo, "Courier New", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--cream);
+    font-family: var(--body);
+    background-color: var(--ink);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, .045) 0 1px, transparent 1px 32px),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, .045) 0 1px, transparent 1px 32px),
+      radial-gradient(circle at 50% 0%, #1b2f52 0%, var(--ink) 62%);
+  }
+
+  /* ---------- top scoreboard strip ---------- */
+  .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem 1.4rem;
+    padding: .75rem 1rem;
+    background: var(--ink-2);
+    border-bottom: 4px solid var(--orange);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, .45);
+    font-family: var(--pixel);
+    font-size: .55rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .topbar span { color: var(--yellow); white-space: nowrap; }
+  .topbar .dot { color: var(--red); }
+
+  /* ---------- layout ---------- */
+  main {
+    width: min(1040px, 100%);
+    margin: 0 auto;
+    padding: clamp(1.25rem, 4vw, 2.75rem) clamp(1rem, 3vw, 1.75rem) 2.5rem;
+  }
+
+  .hero { text-align: center; margin-bottom: clamp(1.25rem, 3vw, 2rem); }
+
+  .hero h1 {
+    margin: 0;
+    font-family: var(--pixel);
+    font-size: clamp(1.7rem, 7.5vw, 4rem);
+    line-height: 1.2;
+    letter-spacing: .04em;
+    color: var(--cream);
+    text-shadow:
+      0 4px 0 var(--ink-2),
+      0 8px 0 rgba(0, 0, 0, .45),
+      4px 4px 0 var(--turf-dark);
+  }
+
+  .hero h1 .accent { color: var(--orange); }
+
+  .hero p {
+    margin: 1.1rem auto 0;
+    max-width: 34ch;
+    font-size: clamp(.85rem, 2.4vw, 1rem);
+    line-height: 1.6;
+    color: #c9d6e8;
+  }
+
+  /* ---------- arcade cabinet ---------- */
+  .cabinet {
+    background: var(--ink-2);
+    border: 4px solid var(--cream);
+    border-radius: 6px;
+    box-shadow: 0 10px 0 rgba(0, 0, 0, .5), 0 0 0 4px var(--ink-2);
+    padding: clamp(.6rem, 2vw, 1rem);
+  }
+
+  .marquee {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: clamp(.6rem, 2vw, .9rem);
+    padding: .6rem .75rem;
+    background: var(--ink);
+    border: 3px dashed rgba(255, 210, 63, .55);
+    font-family: var(--pixel);
+    font-size: clamp(.45rem, 1.6vw, .6rem);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--yellow);
+  }
+
+  .marquee .live { color: var(--turf); }
+
+  .screen {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #000;
+    border: 4px solid var(--turf-dark);
+    box-shadow: inset 0 0 0 2px var(--ink);
+  }
+
+  .screen iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #000;
+  }
+
+  .cabinet:fullscreen,
+  .cabinet.is-expanded {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: .5rem;
+  }
+
+  .cabinet.is-expanded {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+  }
+
+  .cabinet:fullscreen .marquee,
+  .cabinet.is-expanded .marquee { margin-bottom: .5rem; }
+
+  .cabinet:fullscreen .screen,
+  .cabinet.is-expanded .screen {
+    flex: 1 1 auto;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .cabinet__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-top: clamp(.7rem, 2vw, 1rem);
+  }
+
+  .cabinet__bar p {
+    margin: 0;
+    font-size: .8rem;
+    line-height: 1.5;
+    color: #9fb2cc;
+  }
+
+  .btn {
+    cursor: pointer;
+    font-family: var(--pixel);
+    font-size: .55rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--yellow);
+    border: 0;
+    padding: .8rem 1rem;
+    border-radius: 3px;
+    box-shadow: 0 4px 0 #a97b00;
+    transition: transform .08s steps(2), box-shadow .08s steps(2), background .08s;
+  }
+
+  .btn:hover { background: var(--orange); box-shadow: 0 4px 0 #a85d00; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #a97b00; }
+  .btn:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+
+  /* ---------- info panels ---------- */
+  .panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(.9rem, 2.5vw, 1.25rem);
+    margin-top: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .panel {
+    background: rgba(20, 33, 61, .85);
+    border: 3px solid rgba(247, 243, 227, .18);
+    border-left: 6px solid var(--turf);
+    border-radius: 4px;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .panel h2 {
+    margin: 0 0 .9rem;
+    font-family: var(--pixel);
+    font-size: .65rem;
+    line-height: 1.5;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .panel p {
+    margin: 0;
+    font-size: .9rem;
+    line-height: 1.65;
+    color: #c9d6e8;
+  }
+
+  .panel ul { margin: 0; padding: 0; list-style: none; }
+
+  .panel li {
+    position: relative;
+    padding-left: 1.4rem;
+    margin-bottom: .6rem;
+    font-size: .9rem;
+    line-height: 1.6;
+    color: #c9d6e8;
+  }
+
+  .panel li:last-child { margin-bottom: 0; }
+
+  .panel li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: .45em;
+    width: .5rem;
+    height: .5rem;
+    background: var(--yellow);
+  }
+
+  footer {
+    padding: 1.5rem 1rem 2rem;
+    text-align: center;
+    font-size: .75rem;
+    line-height: 1.7;
+    color: #7f93b0;
+  }
+
+  footer a { color: var(--yellow); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>16-bit football</span>
+  <span class="dot">&#9679;</span>
+  <span>Play in your browser</span>
+  <span class="dot">&#9679;</span>
+  <span>No install</span>
+</div>
+
+<main>
+  <section class="hero">
+    <h1>Retro <span class="accent">Bowl</span></h1>
+    <p>Super fun retro style football game. Everything happens right here — snap the ball, run the field, win the bowl.</p>
+  </section>
+
+  <section class="cabinet">
+    <div class="marquee">
+      <span>&#9733; Retro Bowl &#9733;</span>
+      <span class="live">Now playing</span>
+    </div>
+
+    <div class="screen" id="screen">
+      <iframe
+        id="game"
+        title="Retro Bowl game"
+        src="https://game316009.konggames.com/gamez/0031/6009/live/index.html"
+        allowfullscreen="true"
+        webkitallowfullscreen="true"
+        mozallowfullscreen="true"
+        scrolling="no"></iframe>
+    </div>
+
+    <div class="cabinet__bar">
+      <p>Click the field to give it focus, then play with mouse or touch.</p>
+      <button class="btn" id="fullscreen-btn" type="button">Full screen</button>
+    </div>
+  </section>
+
+  <section class="panels">
+    <article class="panel">
+      <h2>How to play</h2>
+      <ul>
+        <li>Tap or click the field once so the game picks up your input.</li>
+        <li>Use the on-screen playbook to call a run or a pass, then carry the ball downfield.</li>
+        <li>Hit full screen for a bigger field and more room for your thumb.</li>
+      </ul>
+    </article>
+    <article class="panel">
+      <h2>Inside the bowl</h2>
+      <p>One page, one game: the arcade cabinet above is the whole thing. Score touchdowns, chase a playoff run, and keep the pixel clock on your side — no sign-up, no second tab.</p>
+    </article>
+  </section>
+</main>
+
+<footer>
+  Retro Bowl is made by New Star Games. The game above is embedded from its host and remains the property of its creators.
+</footer>
+
+<script>
+  (function () {
+    var cabinetEl = document.querySelector('.cabinet');
+    var btn = document.getElementById('fullscreen-btn');
+    var expanded = false;
+
+    function setExpanded(on) {
+      expanded = on;
+      cabinetEl.classList.toggle('is-expanded', on);
+      document.body.style.overflow = on ? 'hidden' : '';
+      btn.textContent = on ? 'Exit full screen' : 'Full screen';
+    }
+
+    btn.addEventListener('click', function () {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+        return;
+      }
+      if (expanded) {
+        setExpanded(false);
+        return;
+      }
+      if (cabinetEl.requestFullscreen) {
+        cabinetEl.requestFullscreen().then(function () {
+          btn.textContent = 'Exit full screen';
+        }).catch(function () {
+          // Embedded frames can block the full screen request: expand in page instead.
+          setExpanded(true);
+        });
+      } else {
+        setExpanded(true);
+      }
+    });
+
+    document.addEventListener('fullscreenchange', function () {
+      if (document.fullscreenElement) {
+        btn.textContent = 'Exit full screen';
+      } else if (!expanded) {
+        btn.textContent = 'Full screen';
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
