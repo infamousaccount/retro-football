@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Retro Bowl</title>
-<meta name="description" content="Retro Bowl — a retro style football arcade game that plays in your browser and downloads to play offline." />
+<meta name="description" content="Retro Bowl — super fun retro style football game, playable right here in the arcade cabinet." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -199,26 +199,6 @@
   .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #a97b00; }
   .btn:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
 
-  a.btn {
-    display: inline-block;
-    text-decoration: none;
-    line-height: 1;
-  }
-
-  .btn--download {
-    color: var(--cream);
-    background: var(--turf);
-    box-shadow: 0 4px 0 var(--turf-dark);
-  }
-
-  .btn--download:hover { background: #39a856; box-shadow: 0 4px 0 #17522a; }
-
-  .cabinet__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .6rem;
-  }
-
   /* ---------- info panels ---------- */
   .panels {
     display: grid;
@@ -312,7 +292,7 @@
       <iframe
         id="game"
         title="Retro Bowl game"
-        src="retrobowl-game.html"
+        src="https://game316009.konggames.com/gamez/0031/6009/live/index.html"
         allowfullscreen="true"
         webkitallowfullscreen="true"
         mozallowfullscreen="true"
@@ -320,11 +300,8 @@
     </div>
 
     <div class="cabinet__bar">
-      <p>Arrow keys or drag to run. Space or tap to snap the ball.</p>
-      <div class="cabinet__actions">
-        <button class="btn" id="fullscreen-btn" type="button">Full screen</button>
-        <a class="btn btn--download" href="retrobowl-game.html" download="retro-bowl.html">Download game</a>
-      </div>
+      <p>Click the field to give it focus, then play with mouse or touch.</p>
+      <button class="btn" id="fullscreen-btn" type="button">Full screen</button>
     </div>
   </section>
 
@@ -332,20 +309,20 @@
     <article class="panel">
       <h2>How to play</h2>
       <ul>
-        <li>Snap with space or by tapping the field.</li>
-        <li>Run with the arrow keys, WASD, or by dragging on the field.</li>
-        <li>Dodge the defense, cross the yellow first-down line, and reach the end zone for seven.</li>
+        <li>Tap or click the field once so the game picks up your input.</li>
+        <li>Use the on-screen playbook to call a run or a pass, then carry the ball downfield.</li>
+        <li>Hit full screen for a bigger field and more room for your thumb.</li>
       </ul>
     </article>
     <article class="panel">
-      <h2>Take it with you</h2>
-      <p>The whole game is one self-contained file — no internet needed once it is saved. Hit <strong>Download game</strong>, then open the file in any browser to play offline. Ninety seconds on the clock, four downs to move the chains.</p>
+      <h2>Inside the bowl</h2>
+      <p>One page, one game: the arcade cabinet above is the whole thing. Score touchdowns, chase a playoff run, and keep the pixel clock on your side — no sign-up, no second tab.</p>
     </article>
   </section>
 </main>
 
 <footer>
-  A fan-made retro football arcade page, built in the spirit of classic 16-bit sports games.
+  Retro Bowl is made by New Star Games. The game above is embedded from its host and remains the property of its creators.
 </footer>
 
 <script>
