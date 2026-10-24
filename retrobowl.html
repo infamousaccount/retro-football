@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Retro Bowl</title>
-<meta name="description" content="Retro Bowl — super fun retro style football game, playable right here in the arcade cabinet." />
+<meta name="description" content="Retro Bowl — a retro style football arcade game that plays in your browser and downloads to play offline." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
@@ -120,7 +120,7 @@
   .screen {
     position: relative;
     width: 100%;
-    aspect-ratio: 968 / 561;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     background: #000;
     border: 4px solid var(--turf-dark);
@@ -128,13 +128,10 @@
   }
 
   .screen iframe {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 968px;
-    height: 561px;
+    display: block;
+    width: 100%;
+    height: 100%;
     border: 0;
-    transform-origin: center center;
     background: #000;
   }
 
@@ -201,6 +198,26 @@
   .btn:hover { background: var(--orange); box-shadow: 0 4px 0 #a85d00; }
   .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #a97b00; }
   .btn:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+
+  a.btn {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 1;
+  }
+
+  .btn--download {
+    color: var(--cream);
+    background: var(--turf);
+    box-shadow: 0 4px 0 var(--turf-dark);
+  }
+
+  .btn--download:hover { background: #39a856; box-shadow: 0 4px 0 #17522a; }
+
+  .cabinet__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+  }
 
   /* ---------- info panels ---------- */
   .panels {
@@ -282,7 +299,7 @@
 <main>
   <section class="hero">
     <h1>Retro <span class="accent">Bowl</span></h1>
-    <p>Super fun retro style football game. Everything happens right here — pick a play, run the field, win the bowl.</p>
+    <p>Super fun retro style football game. Everything happens right here — snap the ball, run the field, win the bowl.</p>
   </section>
 
   <section class="cabinet">
@@ -295,7 +312,7 @@
       <iframe
         id="game"
         title="Retro Bowl game"
-        src="https://game316009.konggames.com/gamez/0031/6009/live/index.html"
+        src="retrobowl-game.html"
         allowfullscreen="true"
         webkitallowfullscreen="true"
         mozallowfullscreen="true"
@@ -303,8 +320,11 @@
     </div>
 
     <div class="cabinet__bar">
-      <p>Click the field to give it focus, then play with mouse or touch.</p>
-      <button class="btn" id="fullscreen-btn" type="button">Full screen</button>
+      <p>Arrow keys or drag to run. Space or tap to snap the ball.</p>
+      <div class="cabinet__actions">
+        <button class="btn" id="fullscreen-btn" type="button">Full screen</button>
+        <a class="btn btn--download" href="retrobowl-game.html" download="retro-bowl.html">Download game</a>
+      </div>
     </div>
   </section>
 
@@ -312,45 +332,26 @@
     <article class="panel">
       <h2>How to play</h2>
       <ul>
-        <li>Tap or click the field once so the game picks up your input.</li>
-        <li>Use the on-screen playbook to call a run or a pass, then carry the ball downfield.</li>
-        <li>Hit full screen for a bigger field and more room for your thumb.</li>
+        <li>Snap with space or by tapping the field.</li>
+        <li>Run with the arrow keys, WASD, or by dragging on the field.</li>
+        <li>Dodge the defense, cross the yellow first-down line, and reach the end zone for seven.</li>
       </ul>
     </article>
     <article class="panel">
-      <h2>Inside the bowl</h2>
-      <p>One page, one game: the arcade cabinet above is the whole thing. Score touchdowns, chase a playoff run, and keep the pixel clock on your side — no downloads, no sign-up, no second tab.</p>
+      <h2>Take it with you</h2>
+      <p>The whole game is one self-contained file — no internet needed once it is saved. Hit <strong>Download game</strong>, then open the file in any browser to play offline. Ninety seconds on the clock, four downs to move the chains.</p>
     </article>
   </section>
 </main>
 
 <footer>
-  Retro Bowl is made by New Star Games. The game above is embedded from its host and remains the property of its creators.
+  A fan-made retro football arcade page, built in the spirit of classic 16-bit sports games.
 </footer>
 
 <script>
   (function () {
-    var BASE_W = 968;
-    var BASE_H = 561;
     var cabinetEl = document.querySelector('.cabinet');
-    var screenEl = document.getElementById('screen');
-    var game = document.getElementById('game');
     var btn = document.getElementById('fullscreen-btn');
-
-    function fit() {
-      var rect = screenEl.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      var scale = Math.min(rect.width / BASE_W, rect.height / BASE_H);
-      game.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
-    }
-
-    if (window.ResizeObserver) {
-      new ResizeObserver(fit).observe(screenEl);
-    }
-    window.addEventListener('resize', fit);
-    window.addEventListener('load', fit);
-    fit();
-
     var expanded = false;
 
     function setExpanded(on) {
@@ -358,7 +359,6 @@
       cabinetEl.classList.toggle('is-expanded', on);
       document.body.style.overflow = on ? 'hidden' : '';
       btn.textContent = on ? 'Exit full screen' : 'Full screen';
-      fit();
     }
 
     btn.addEventListener('click', function () {
@@ -373,7 +373,6 @@
       if (cabinetEl.requestFullscreen) {
         cabinetEl.requestFullscreen().then(function () {
           btn.textContent = 'Exit full screen';
-          fit();
         }).catch(function () {
           // Embedded frames can block the full screen request: expand in page instead.
           setExpanded(true);
@@ -389,7 +388,6 @@
       } else if (!expanded) {
         btn.textContent = 'Full screen';
       }
-      fit();
     });
   })();
 </script>
